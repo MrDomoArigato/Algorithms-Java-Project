@@ -5,7 +5,7 @@ import java.util.HashMap;
 public class Node {
     public final int nodeId;
     public final String nodeName;
-    private HashMap<Node, Integer> edges;
+    private HashMap<Node, Integer> edges = new HashMap<>();
 
     public Node(int nodeId, String nodeName){
         this.nodeId = nodeId;
@@ -22,6 +22,10 @@ public class Node {
 
     public void removeEdge(Node endNode){
         this.edges.remove(endNode);
+    }
+
+    public HashMap<Node, Integer> getEdges(){
+        return this.edges;
     }
 
     public boolean equals(Node n){

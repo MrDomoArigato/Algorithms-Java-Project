@@ -14,14 +14,16 @@ public class GraphUtil {
         Node[] graph = new Node[graphSize];
         for(int n = 0; n < graphSize; n++){
             // TODO fix graph labels to be unique when size > 26
-            graph[n] = new Node(n, Character.toString((n % 65) + 65));
+            graph[n] = new Node(n, Character.toString((char) ((n % 65) + 65)));
+            System.out.println(graph[n].nodeName + " Node Created.");
         }
 
         for(int n = 0; n < graphSize; n++){
-            int edgeNum = (int) Math.floor(new Random().nextGaussian()*2.5+3);
+            System.out.println("Adding edges to Node " + graph[n].nodeName);
+            int edgeNum = (int) Math.floor(new Random().nextGaussian()*2+3);
 
             for(int e = 0; e < edgeNum; e++){
-                int dest = new Random().nextInt(graphSize - 0 + 1) + 0;
+                int dest = new Random().nextInt(graphSize - 0) + 0;
                 int weight = (int) Math.floor( new Random().nextGaussian()*5+10 );
 
                 graph[n].addEdge(graph[dest], weight);
@@ -30,4 +32,6 @@ public class GraphUtil {
 
         return graph[0];
     }
+
+    
 }
