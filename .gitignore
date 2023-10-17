@@ -3,3 +3,6 @@ target/
 
 # Mac OS file
 .DS_Store
+
+# Ignore Generated Graph Files
+*.gv.text

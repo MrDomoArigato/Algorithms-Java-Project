@@ -6,8 +6,14 @@ package dev.akikato42.school.java;
  */
 public class App 
 {
+    /**
+     * Main function for running program
+     * @param args
+     */
     public static void main( String[] args )
     {
-        System.out.println(GraphUtil.newRandomGraph().getEdges().values().isEmpty());
+        Node[] graph = GraphUtil.randomGraphBySize(10);
+        GraphUtil.outputGraph(graph, null);
+        System.out.println(GraphUtil.Dijkstra(graph[0], graph[graph.length - 1]));
     }
 }
