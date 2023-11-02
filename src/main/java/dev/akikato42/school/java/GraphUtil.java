@@ -4,36 +4,43 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
-import java.util.SortedSet;
 
 public class GraphUtil {
+
+    /**
+     * Creates a new random graph of Nodes with a random size
+     * @return Node Array containing all generated Nodes
+     */
     public static Node[] newRandomGraph(){
         // Determines Size of graph. 
         int nodes = new Random().nextInt(26 - 0 + 1) + 0;
 
         // TODO change back to random node count
-        return randomGraphBySize(10);
+        return randomGraphBySize(nodes);
     }
 
-    private static Node[] randomGraphBySize(int graphSize){
+    /**
+     * Creates a randomized graph based on a number of resulting nodes
+     * @param graphSize Number of nodes to create
+     * @return Node Array containing all generated Nodes
+     */
+    public static Node[] randomGraphBySize(int graphSize){
         Random rand = new Random();
         Node[] graph = new Node[graphSize];
         for(int n = 0; n < graphSize; n++){
             // TODO fix graph labels to be unique when size > 26
             graph[n] = new Node(n, Character.toString((char) ((n % 65) + 65)));
-            System.out.println(graph[n].nodeName + " Node Created.");
         }
 
         for(int n = 0; n < graphSize; n++){
-            System.out.println("Adding edges to Node " + graph[n].nodeName);
             int edgeNum = (int) Math.floor(rand.nextGaussian()*1+3);
 
             for(int e = 0; e < edgeNum; e++){
@@ -47,35 +54,55 @@ public class GraphUtil {
         return graph;
     }
 
+    /**
+     * Out facing Dijkstra's Algorithm call
+     * @param s Start node for algorithm
+     * @param e End node
+     * @return Distance from Node s to Node e
+     */
     public static Integer Dijkstra(Node s, Node e){
+        long start = System.nanoTime();
         Set<Node> filter = new HashSet<>();
+        Map<Node, Integer> next = new HashMap<>();
         s.addDistance(new Node[]{s}, 0);
         s.setDistance(0);
-        Dijkstra(s, filter);
+        next.put(s, 0);
+        Dijkstra(next, filter);
+        long stop = System.nanoTime();
+        System.out.println("Dijkstra :: Time - " + (stop - start));
         if(e.getDistance() == Integer.MAX_VALUE)
             System.out.println("No Connections to end node.");
         return e.getDistance();
     }
 
-    private static void Dijkstra(Node n, Set<Node> filter){
-        System.out.println(n.nodeName);
-        filter.add(n);
+    /**
+     * Dijkstra's Algorithm
+     * @param next Map of next avaliable Nodes to visit
+     * @param filter Already visited nodes to prevent loops
+     */
+    private static void Dijkstra(Map<Node, Integer> next, Set<Node> filter){
+        if(next.isEmpty())
+            return;
+        Node n = Collections.min(next.entrySet(), Map.Entry.comparingByValue()).getKey();
         n.getEdges().entrySet().stream().sorted(Map.Entry.comparingByValue()).forEach(entry -> {
-            if(entry.getKey().getDistance() > (n.getDistance() + entry.getValue())){
+            if(entry.getKey().getDistance() > (n.getDistance() + entry.getValue()))
                 entry.getKey().setDistance(n.getDistance() + entry.getValue());
-            }
-            if(!filter.contains(entry.getKey()) && n != entry.getKey()){
-                Dijkstra(entry.getKey(), filter);
-            }
-        });            
+            if(!filter.contains(entry.getKey()) && entry.getKey() != n)
+                next.put(entry.getKey(), entry.getValue());
+        });
+        next.remove(n);
+        filter.add(n);
+        Dijkstra(next, filter);      
     }
 
     /*
      * Graphing code below please ignore
-     */
+    */
 
-    /*
-     * Easy Code for making graphs 
+    /**
+     * Easy Code for making graphs
+     * @param graph Array of Nodes to be used in resulting File
+     * @param hghlgtPath Path of Nodes to be highlighted
      */
     public static void outputGraph(Node[] graph, Node[] hghlgtPath){
         Set<String> filters = new HashSet<>();
@@ -109,13 +136,15 @@ public class GraphUtil {
         }
     }
 
-    /*
-     * Writes non-highlighted edges
+    /**
+     * Writes Nodes and Edges for a non-highlighted path
+     * @param lines The lines that will be written out to the file
+     * @param s The nodes that need to be written
+     * @param filters A filter to hold highlighted Nodes and Edges to prevent duplication
      */
     private static void makeGraph(Set<String> lines, Node[] s, Set<String> filters){
         for(Node n : s){
             for(Node o : n.getEdges().keySet()){
-                System.out.println(n.nodeName + " -> " + o.nodeName);
                 if(!filters.contains(n.nodeName + " -> " + o.nodeName)){
                     lines.add(n.nodeName + " -> " + o.nodeName + " [label="+ n.getWeight(o) + "]");
                 }
