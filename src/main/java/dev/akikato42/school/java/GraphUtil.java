@@ -64,7 +64,6 @@ public class GraphUtil {
         long start = System.nanoTime();
         Set<Node> filter = new HashSet<>();
         Map<Node, Integer> next = new HashMap<>();
-        s.addDistance(new Node[]{s}, 0);
         s.setDistance(0);
         next.put(s, 0);
         Dijkstra(next, filter);
