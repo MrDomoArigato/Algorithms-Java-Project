@@ -15,5 +15,6 @@ public class App
         Node[] graph = GraphUtil.randomGraphBySize(10);
         GraphUtil.outputGraph(graph, null);
         System.out.println(GraphUtil.Dijkstra(graph[0], graph[graph.length - 1]));
+        System.out.println(GraphUtil.BellmanFord(graph[0]).get(graph[graph.length - 1]));
     }
 }

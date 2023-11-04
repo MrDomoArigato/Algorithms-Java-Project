@@ -68,7 +68,7 @@ public class GraphUtil {
         next.put(s, 0);
         Dijkstra(next, filter);
         long stop = System.nanoTime();
-        System.out.println("Dijkstra :: Time - " + (stop - start));
+        System.out.println("Dijkstra :: Time ( " + (stop - start) + "ns )");
         if(e.getDistance() == Integer.MAX_VALUE)
             System.out.println("No Connections to end node.");
         return e.getDistance();
@@ -76,6 +76,7 @@ public class GraphUtil {
 
     /**
      * Dijkstra's Algorithm
+     * Time Complexity O(nlogn)
      * @param next Map of next avaliable Nodes to visit
      * @param filter Already visited nodes to prevent loops
      */
@@ -92,6 +93,44 @@ public class GraphUtil {
         next.remove(n);
         filter.add(n);
         Dijkstra(next, filter);      
+    }
+
+    /**
+     * Public Bellman-Ford Algorithm call
+     * @param s Start Node for algorithm
+     * @return Map of Nodes and there distances from Node s
+     */
+    public static Map<Node, Integer> BellmanFord(Node s){
+        Set<Node> filter = new HashSet<>();
+        Map<Node, Integer> results = new HashMap<>();
+        long start = System.nanoTime();
+        s.setDistance(0);
+        results.put(s, 0);
+
+        BellmanFord(s, results, filter);
+        
+        long stop = System.nanoTime();
+        System.out.println("Bellman-Ford :: Time ( " + (stop - start) + "ns )");
+
+        return results;
+    }
+
+    /**
+     * Bellman-Ford Algorithm
+     * Time Complexity: O(n^3)
+     * @param c current Node
+     * @param results Map of distance results
+     */
+    private static void BellmanFord(Node c, Map<Node, Integer> results, Set<Node> filter){
+       filter.add(c);
+        c.getEdges().entrySet().stream().forEach(entry -> {
+            if(!results.containsKey(entry.getKey()))
+                results.put(entry.getKey(), results.get(c) + entry.getValue());
+            else if(results.get(c) + entry.getValue() < results.get(entry.getKey()))
+                results.put(entry.getKey(), results.get(c) + entry.getValue());
+            if(!filter.contains(entry.getKey()))
+                BellmanFord(entry.getKey(), results, filter);
+        });
     }
 
     /*
